@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Scanner</title>
-    <!-- Include html5-qrcode library via CDN -->
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-    <!-- Link to external CSS file -->
+    <title>Barcode Scanner</title>
+    <!-- Link to external CSS -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
     <div class="scanner-container">
-        <h1>QR Code Scanner</h1>
-        <div id="reader"></div>
+        <h1>Barcode Scanner</h1>
+        <!-- Container for the camera feed -->
+        <div id="scanner"></div>
+        <!-- Container for displaying the scanned result -->
         <div id="output">Scanned result will appear here...</div>
     </div>
 
-    <!-- Link to external JavaScript file -->
+    <!-- Link to external JavaScript files -->
+    <!-- QuaggaJS library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <!-- Link to your custom JavaScript -->
     <script src="main.js"></script>
 
 </body>
