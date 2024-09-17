@@ -1,5 +1,7 @@
 // main.js
 
+let scannedCode = '';
+
 // Function to start Quagga and scan for barcodes
 function startBarcodeScanner() {
     Quagga.init({
@@ -26,13 +28,22 @@ function startBarcodeScanner() {
 
     // When a barcode is detected
     Quagga.onDetected(function(result) {
-        const code = result.codeResult.code; // Get the barcode value
-        document.getElementById('output').innerText = `Scanned Result: ${code}`; // Display the result
+        scannedCode = result.codeResult.code; // Get the barcode value
+        document.getElementById('scanned-result').value = scannedCode; // Display in the input box
+        document.getElementById('submit-btn').disabled = false; // Enable the Submit button
 
         // Optionally stop the scanner after a successful scan
         Quagga.stop();
     });
 }
+
+// Function to handle the Submit button click
+document.getElementById('submit-btn').addEventListener('click', function() {
+    if (scannedCode) {
+        alert('Submitted Barcode: ' + scannedCode);
+        // You can add additional functionality here, such as sending the scanned code to a server
+    }
+});
 
 // Initialize the barcode scanner when the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', function() {
