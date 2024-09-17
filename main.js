@@ -1,35 +1,40 @@
 // main.js
 
-// Function to handle successful scans
-function onScanSuccess(qrCodeMessage) {
-    // Display the scanned QR code message
-    const output = document.getElementById('output');
-    output.innerText = `Scanned Result: ${qrCodeMessage}`;
+// Function to start Quagga and scan for barcodes
+function startBarcodeScanner() {
+    Quagga.init({
+        inputStream: {
+            type: "LiveStream",
+            target: document.querySelector('#scanner'), // Camera feed container
+            constraints: {
+                width: 640,
+                height: 480,
+                facingMode: "environment" // Use the rear camera
+            }
+        },
+        decoder: {
+            readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader"] // Barcode formats to scan
+        }
+    }, function(err) {
+        if (err) {
+            console.error(err);
+            return;
+        }
+        console.log("Barcode scanner initialized.");
+        Quagga.start(); // Start the scanner
+    });
 
-    // Optionally, you can perform additional actions with the scanned data here
+    // When a barcode is detected
+    Quagga.onDetected(function(result) {
+        const code = result.codeResult.code; // Get the barcode value
+        document.getElementById('output').innerText = `Scanned Result: ${code}`; // Display the result
 
-    // Stop the scanner after a successful scan
-    html5QrCodeScanner.clear().then(_ => {
-        console.log("Scanner stopped after successful scan.");
-    }).catch(error => {
-        console.error("Failed to clear the scanner.", error);
+        // Optionally stop the scanner after a successful scan
+        Quagga.stop();
     });
 }
 
-// Function to handle scan errors (optional)
-function onScanError(errorMessage) {
-    // You can log scan errors or display them to the user if desired
-    console.warn(`Scan error: ${errorMessage}`);
-}
-
-// Initialize the QR code scanner when the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    const html5QrCodeScanner = new Html5QrcodeScanner(
-        "reader", 
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        /* verbose= */ false
-    );
-
-    // Start scanning and specify the callback functions
-    html5QrCodeScanner.render(onScanSuccess, onScanError);
+// Initialize the barcode scanner when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', function() {
+    startBarcodeScanner();
 });
