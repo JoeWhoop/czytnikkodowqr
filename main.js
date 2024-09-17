@@ -9,14 +9,20 @@ function startBarcodeScanner() {
             type: "LiveStream",
             target: document.querySelector('#scanner'), // Camera feed container
             constraints: {
-                width: 640,
-                height: 480,
+                width: 480,  // Lower resolution for faster processing
+                height: 320,
                 facingMode: "environment" // Use the rear camera
             }
         },
+        locator: {
+            halfSample: true, // Reduces resolution for faster localization
+            patchSize: "medium" // Options: "x-small", "small", "medium", "large", "x-large"
+        },
         decoder: {
-            readers: ["code_128_reader", "ean_reader", "ean_8_reader", "code_39_reader", "upc_reader"] // Barcode formats to scan
-        }
+            readers: ["code_128_reader", "ean_reader"] // Only necessary formats for faster decoding
+        },
+        locate: true,
+        frequency: 10 // Process every 10th frame for better performance
     }, function(err) {
         if (err) {
             console.error(err);
@@ -31,9 +37,8 @@ function startBarcodeScanner() {
         scannedCode = result.codeResult.code; // Get the barcode value
         document.getElementById('scanned-result').value = scannedCode; // Display in the input box
         document.getElementById('submit-btn').disabled = false; // Enable the Submit button
-
-        // Optionally stop the scanner after a successful scan
-        Quagga.stop();
+        document.getElementById('retry-btn').disabled = false; // Enable the Retry button
+        Quagga.stop(); // Stop the scanner after a successful scan
     });
 }
 
@@ -41,8 +46,17 @@ function startBarcodeScanner() {
 document.getElementById('submit-btn').addEventListener('click', function() {
     if (scannedCode) {
         alert('Submitted Barcode: ' + scannedCode);
-        // You can add additional functionality here, such as sending the scanned code to a server
+        // Add additional functionality here, such as sending the scanned code to a server
     }
+});
+
+// Function to handle the Retry button click
+document.getElementById('retry-btn').addEventListener('click', function() {
+    scannedCode = '';
+    document.getElementById('scanned-result').value = ''; // Clear the scanned result
+    document.getElementById('submit-btn').disabled = true; // Disable the Submit button
+    document.getElementById('retry-btn').disabled = true; // Disable the Retry button
+    startBarcodeScanner(); // Restart the scanner
 });
 
 // Initialize the barcode scanner when the DOM is fully loaded
